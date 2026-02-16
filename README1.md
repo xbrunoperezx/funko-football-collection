@@ -18,7 +18,7 @@ Este documento muestra la **estructura de las tablas** que tendrá nuestro proye
 
 ---
 
-## Tabla: `categories`
+## Tabla: `categories`(clasificar funkos)
 
 - `id` (clave primaria)
 - `name` - Nombre de la categoría
@@ -28,28 +28,30 @@ Este documento muestra la **estructura de las tablas** que tendrá nuestro proye
 
 ---
 
-## Tabla: `users`
+## Tabla: `users`(gestionar usuarios)
 
 - `id` (clave primaria)
 - `name` - Nombre del usuario
 - `email` - Correo electrónico
 - `password` - Contraseña (hash)
+- `role ` -  ejemplo: admin o user
 - `created_at` - Fecha de creación automática
 - `updated_at` - Fecha de actualización automática
 
 ---
 
-## Tabla: `orders`
+## Tabla: `orders`(compras / colecciones de funkos)
 
 - `id` (clave primaria)
 - `user_id` - Relación con el usuario
 - `total` - Total de la orden
+- `status` -  ver estado pendiente, completado, cancelado
 - `created_at` - Fecha de creación automática
 - `updated_at` - Fecha de actualización automática
 
 ---
 
-## Tabla: `order_items`
+## Tabla: `order_items`(detalle de cada funko comprado)
 
 - `id` (clave primaria)
 - `order_id` - Relación con la orden
