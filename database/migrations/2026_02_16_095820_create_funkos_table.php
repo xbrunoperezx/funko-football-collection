@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('funkos', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('team')->nullable();
+            $table->foreignId('category_id')->constrained()-onDelete('cascade'); //relacion con tabla de categories
             $stable->string('era')->nullable();
             $table->string('image_path')->nullable();
             $table->text('description')->nullable();
+            $table->decimal('price', 8, 2)->nullable(), //para la parte 2 de proyecto es opcional ahroa
             $table->timestamps();
         });
     }
