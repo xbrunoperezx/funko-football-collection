@@ -3,7 +3,7 @@ FROM php:8.2-apache
 # Instalar extensiones necesarias
 RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Copiar el código al document root
+# Copiar el código al document roots
 COPY . /var/www/html/
 
 # Permisos
