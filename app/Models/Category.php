@@ -12,7 +12,9 @@ class Category extends Model {
         'description',
     ];
 
-    public function funkos
+    public function funkos (){
+        return $this->hasMany(Funko::class);
+    }
 
 
 }
