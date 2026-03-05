@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class UserController extends Controller
-{
+class UserController extends Controller {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        return view('users.index'); // Retorna la vista para listar users
+
     }
 
     /**
@@ -19,7 +19,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create'); // Retorna la vista para crear un user
     }
 
     /**
@@ -43,7 +43,7 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view('users.edit', compact('id')); // Retorna la vista para editar un user
     }
 
     /**

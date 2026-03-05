@@ -6,57 +6,44 @@ use Illuminate\Http\Request;
 
 class FunkoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    //  FUNCION Retorna la vista para listar Funkos
     public function index()
     {
-        //
+        return view('funkos.index'); // Retorna la vista para listar Funkos
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // FUNCION  Retorna la vista para crear un Funko
     public function create()
     {
-        //
+        return view('funkos.create'); // Retorna la vista para crear un Funko
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+   // FUNCION  Retorna la vista para editar un Funko
     public function edit(string $id)
     {
-        //
+         return view('funkos.edit', compact('id')); // Retorna la vista para editar un Funko
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(string $id)
     {
         //
