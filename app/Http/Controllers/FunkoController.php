@@ -54,21 +54,52 @@ class FunkoController extends Controller
         //
     }
 
-   // FUNCION  Retorna la vista para editar un Funko
+   // FUNCION  Retorna la vista para editar un Funko en el formulario
     public function edit(string $id)
     {
-         return view('funkos.edit', compact('id')); // Retorna la vista para editar un Funko
+        //Buscamos el funko por su ID
+        $funko = Funko::findOrFail($id);
+
+        //Obtenemos todas las categorias para el select
+        $categories = Category::all();
+
+        //Retornamos a la visata de edicion con los datos del Funko y la categoria
+        return view('funkos.edit', compact('funko', 'categories')); 
     }
 
-    
+    // Método para actualizar un Funko existente
     public function update(Request $request, string $id)
     {
-        //
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:225',
+            'category' => 'required|integer|exists:categories,id',
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        // Buscar el Funko por su ID
+        $funko = Funko::findOrFail($id);
+
+        // Actualizar los datos del Funko
+        $funko->update([
+            'name' => $validatedData['name'],
+            'category_id' => $validatedData['category'],
+            'price' => $validatedData['price'],
+        ]);
+
+        // Redirigir al índice con un mensaje de éxito
+        return redirect()->route('funkos.index')->with('success', 'Funko actualizado exitosamente.');
+
     }
 
     
     public function destroy(string $id)
     {
-        //
+        // Buscar el Funko por su ID y eliminarlo
+        $funko = Funko::findOrFail($id);
+        $funko->delete();
+
+        // Redirigir al índice con un mensaje de éxito
+        return redirect()->route('funkos.index')->with('success', 'Funko eliminado exitosamente.');
     }
 }
