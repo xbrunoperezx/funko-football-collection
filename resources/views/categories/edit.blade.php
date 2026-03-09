@@ -7,8 +7,18 @@
 </head>
 <body>
     <h1>Editar  categories </h1>
-    <form action="">
-        <!-- aqui ira el formulario-->
+    <form action="{{ route('categories.update', $category->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" name="name" value="{{ $category->name }}" required>
+
+        <label for="description">Descripción:</label>
+        <textarea id="description" name="description" required>{{ $category->description }}</textarea>
+
+        <button type="submit">Actualizar</button>
     </form>
+
 </body>
 </html>

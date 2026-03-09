@@ -29,9 +29,9 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         //Validarmos los datos del formulario
-        $validatedData = $request->Validate([
-            'name' => 'requiered|string|max:255',
-            'description' => 'requiered|string',
+        $validatedData = $request->validate ([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
         ]);
 
         //creamos la categoria en la base de atos
@@ -50,18 +50,42 @@ class CategoryController extends Controller
     // FUNCION Retorna la vista para editar un categories
     public function edit(string $id)
     {
-        return view('categories.edit', compact('id')); // Retorna la vista para editar un categories
+        // Buscar la categoría por su ID
+        $category = Category::findOrFail($id);
+
+        // Retornar la vista de edición con los datos de la categoría
+        return view('categories.edit', compact('category'));
     }
 
     
     public function update(Request $request, string $id)
     {
-        //
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+        ]);
+
+        // Buscar la categoría por su ID
+        $category = Category::findOrFail($id);
+
+        // Actualizar los datos de la categoría
+        $category->update($validatedData);
+
+        // Redirigir al índice con un mensaje de éxito
+        return redirect()->route('categories.index')->with('success', 'Categoría actualizada correctamente.');
     }
 
     
     public function destroy(string $id)
     {
-        //
+        // Buscar la categoria por su ID
+        $category = Category::findOrFail($id);
+
+        // Eliminar la categoria
+        $category->delete();
+
+        // Redirigir al índice con un mensaje de éxito
+        return redirect()->route('categories.index')->with('success', 'Categoría eliminada correctamente.');
     }
 }
