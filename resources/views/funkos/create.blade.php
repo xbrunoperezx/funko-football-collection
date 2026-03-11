@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear - funkos</title>
-</head>
-<body>
-    <h1>Crear un nuevo  funkos </h1>
+@extends('layouts.app')
+
+@section('content')
+    <h1>***Crear un nuevo  funkos***</h1>
     
     <form action="{{ route('funkos.store') }}" method="POST">
         @csrf
@@ -26,5 +21,5 @@
         <br>
         <button type="submit">Guardar</button>
     </form>
-</body>
-</html>
+
+@endsection

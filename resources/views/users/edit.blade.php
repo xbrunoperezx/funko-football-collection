@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar - users</title>
-</head>
-<body>
-    <h1>Editar users </h1>
+@extends('layouts.app')
+
+
+@section('content')
+    <h1>***Editar users***</h1>
     <form action="{{ route('users.update', $user->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -28,5 +24,4 @@
 
         <button type="submit">Actualizar Usuario</button>
     </form>
-</body>
-</html>
+@endsection

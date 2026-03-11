@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index - categories</title>
-</head>
-<body>
-    <h1>Listado de Categorías</h1>
+@extends('layouts.app')
+
+@section('content')
+    <h1>***Listado de Categorías***</h1>
     <a href="{{ route('categories.create') }}">Crear Nueva Categoría</a>
-    <table border="1">
+    <table class="table table-striped" border="1">
         <thead>
             <tr>
                 <th>ID</th>
@@ -35,5 +30,4 @@
             @endforeach
         </tbody>
     </table>
-</body>
-</html>
+@endsection

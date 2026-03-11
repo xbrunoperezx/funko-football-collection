@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar - categories</title>
-</head>
-<body>
-    <h1>Editar  categories </h1>
+@extends('layouts.app')
+
+@section('content')
+    <h1>***Editar  categories***</h1>
     <form action="{{ route('categories.update', $category->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -20,5 +15,4 @@
         <button type="submit">Actualizar</button>
     </form>
 
-</body>
-</html>
+@endsection
