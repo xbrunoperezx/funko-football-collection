@@ -18,6 +18,13 @@
                 </div>
             </div>
 
+            <!-- Menú de administración personalizado -->
+            <div class="flex space-x-4 ml-4">
+                <a href="{{ route('funkos.index') }}" class="text-gray-700 hover:text-blue-600">Funkos</a>
+                <a href="{{ route('categories.index') }}" class="text-gray-700 hover:text-blue-600">Categorías</a>
+                <a href="{{ route('users.index') }}" class="text-gray-700 hover:text-blue-600">Usuarios</a>
+            </div>
+
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">
