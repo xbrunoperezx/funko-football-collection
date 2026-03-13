@@ -1,19 +1,20 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\FunkoController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\UserController;
 
-Route::get('/test', function () {
-    return "Todo funciona correctamente 🚀";
+Route::get('/', function () {
+    return view('welcome');
 });
 
-// Ruta para la vista principal
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-// Rutas de tipo resource para las entidades principales
-Route::resource('funkos', FunkoController::class);
-Route::resource('categories', CategoryController::class);
-Route::resource('users', UserController::class);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
