@@ -1,35 +1,55 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>***Listado de funkos***</h1>
-    <a href="{{ route('funkos.create') }}">Crear Nuevo Funko</a>
-    <table border="1">
-        <thead>
+    <h1 class="text-center my-4">***Listado de Funkos***</h1>
+    <a href="{{ route('funkos.create') }}" class="btn btn-success mb-3">Crear Nuevo Funko</a>
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Categoria</th>
-                <th>Precio</th>
-                <th>Acciones</th>
+                <th class="text-center">ID</th>
+                <th class="text-center">Nombre</th>
+                <th class="text-center">Categoría</th>
+                <th class="text-center">Precio</th>
+                <th class="text-center">Acciones</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($funkos as $funko)
             <tr>
-                <td>{{ $funko->id }}</td>
+                <td class="text-center">{{ $funko->id }}</td>
                 <td>{{ $funko->name }}</td>
-                <td>{{ $funko->category->name }}</td> <!-- Mostrar el nombre de la categoría -->
-                <td>{{ $funko->price }}</td>
-                <td>
-                    <a href="{{ route('funkos.edit', $funko->id) }}">Editar</a>
-                    <form action="{{ route('funkos.destroy', $funko->id) }}" method="POST" style="display:inline;">
+                <td>{{ $funko->category->name }}</td>
+                <td class="text-end">${{ number_format($funko->price, 2) }}</td>
+                <td class="text-center">
+                    <a href="{{ route('funkos.edit', $funko->id) }}" class="btn btn-primary btn-sm">Editar</a>
+                    <form action="{{ route('funkos.destroy', $funko->id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete(event, this);">
                         @csrf
                         @method('DELETE')
-                        <button type="submit">Eliminar</button>
+                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                     </form>
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>
+
+    <script>
+        function confirmDelete(event, form) {
+            event.preventDefault();
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¡No podrás revertir esto!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    </script>
 @endsection

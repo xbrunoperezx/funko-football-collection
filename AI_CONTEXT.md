@@ -29,6 +29,8 @@ Aplicación web con arquitectura MVC.
 - HTML
 - CSS
 - JavaScript
+- Bootstrap
+- Sweetalert2
 
 ## Entorno de desarrollo
 - Visual Studio Code
