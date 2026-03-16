@@ -1,38 +1,41 @@
-@extends('layouts.app')
-
-@section('content')
-    <h1 class="text-center my-4">***Listado de Funkos***</h1>
-    <a href="{{ route('funkos.create') }}" class="btn btn-success mb-3">Crear Nuevo Funko</a>
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th class="text-center">ID</th>
-                <th class="text-center">Nombre</th>
-                <th class="text-center">Categoría</th>
-                <th class="text-center">Precio</th>
-                <th class="text-center">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($funkos as $funko)
-            <tr>
-                <td class="text-center">{{ $funko->id }}</td>
-                <td>{{ $funko->name }}</td>
-                <td>{{ $funko->category->name }}</td>
-                <td class="text-end">${{ number_format($funko->price, 2) }}</td>
-                <td class="text-center">
-                    <a href="{{ route('funkos.edit', $funko->id) }}" class="btn btn-primary btn-sm">Editar</a>
-                    <form action="{{ route('funkos.destroy', $funko->id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete(event, this);">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Listado de Funkos
+        </h2>
+    </x-slot>
+    <div class="py-6">
+        <a href="{{ route('funkos.create') }}" class="btn btn-success mb-3">Crear Nuevo Funko</a>
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th class="text-center">ID</th>
+                    <th class="text-center">Nombre</th>
+                    <th class="text-center">Categoría</th>
+                    <th class="text-center">Precio</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($funkos as $funko)
+                <tr>
+                    <td class="text-center">{{ $funko->id }}</td>
+                    <td>{{ $funko->name }}</td>
+                    <td>{{ $funko->category->name }}</td>
+                    <td class="text-end">${{ number_format($funko->price, 2) }}</td>
+                    <td class="text-center">
+                        <a href="{{ route('funkos.edit', $funko->id) }}" class="btn btn-primary btn-sm">Editar</a>
+                        <form action="{{ route('funkos.destroy', $funko->id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete(event, this);">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
     <script>
         function confirmDelete(event, form) {
             event.preventDefault();
@@ -52,4 +55,4 @@
             });
         }
     </script>
-@endsection
+</x-app-layout>
