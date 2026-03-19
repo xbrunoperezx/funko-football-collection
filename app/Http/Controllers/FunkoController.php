@@ -31,20 +31,40 @@ class FunkoController extends Controller
     // metodo FUNCION  para manejar los datos enviados desde el formulario
     public function store(Request $request)
     {
-        //validar los datos del formulario
-        $validatedData = $request->validate ([
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
             'name' => 'required|string|max:225',
             'category' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,bmp|max:4096'
         ]);
 
-        // Usar directamente el ID de la categoría enviado desde el formulario
         $validatedData['category_id'] = $request->input('category');
 
-        //crear un nuevo Funko en la base de datos
+        // Manejar la imagen si se sube
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+
+            // Detectar la categoría
+            $category = $request->input('category');
+            $categoryFolder = strtolower(str_replace(' ', '-', $category)); // Ejemplo: "Era moderna" -> "era-moderna"
+
+            // Crear la carpeta si no existe
+            $destinationPath = public_path('images/funkos/' . $categoryFolder);
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            // Mover la imagen
+            $image->move($destinationPath, $imageName);
+
+            // Guardar la ruta relativa
+            $validatedData['image_path'] = 'images/funkos/' . $categoryFolder . '/' . $imageName;
+        }
+
         Funko::create($validatedData);
 
-        // Redirigir al listado de Funkos con un mensaje de éxito
         return redirect()->route('funkos.index')->with('success', 'Funko creado exitosamente.');
     }
 
@@ -53,6 +73,14 @@ class FunkoController extends Controller
     {
         //
     }
+
+        // Método para mostrar la vista pública de la tienda (catálogo)
+        public function shop()
+        {
+            // Recuperar todos los funkos con su categoría
+            $funkos = Funko::with('category')->get();
+            return view('shop.index', compact('funkos'));
+        }
 
    // FUNCION  Retorna la vista para editar un Funko en el formulario
     public function edit(string $id)
@@ -75,21 +103,31 @@ class FunkoController extends Controller
             'name' => 'required|string|max:225',
             'category' => 'required|integer|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,bmp|max:4096'
         ]);
 
         // Buscar el Funko por su ID
         $funko = Funko::findOrFail($id);
 
         // Actualizar los datos del Funko
-        $funko->update([
+        $updateData = [
             'name' => $validatedData['name'],
             'category_id' => $validatedData['category'],
             'price' => $validatedData['price'],
-        ]);
+        ];
+
+        // Manejar la imagen si se sube
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('images/funkos'), $imageName);
+            $updateData['image_path'] = 'images/funkos/' . $imageName;
+        }
+
+        $funko->update($updateData);
 
         // Redirigir al índice con un mensaje de éxito
         return redirect()->route('funkos.index')->with('success', 'Funko actualizado exitosamente.');
-
     }
 
     

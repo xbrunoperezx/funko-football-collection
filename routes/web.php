@@ -15,7 +15,11 @@ Route::get('/', function () {
 
 
 
-Route::get('/dashboard', [DashboardController::class, 'index']) 
+
+// Ruta pública para la tienda (catálogo)
+Route::get('/shop', [FunkoController::class, 'shop'])->name('shop');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 

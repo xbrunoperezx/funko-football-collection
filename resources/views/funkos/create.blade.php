@@ -5,7 +5,16 @@
         </h2>
     </x-slot>
     <div class="py-6">
-        <form action="{{ route('funkos.store') }}" method="POST" class="w-50 mx-auto">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form action="{{ route('funkos.store') }}" method="POST" enctype="multipart/form-data" class="w-50 mx-auto">
             @csrf
             <div class="form-group mb-3">
                 <label for="name" class="form-label">Nombre:</label>
@@ -23,6 +32,10 @@
             <div class="form-group mb-3">
                 <label for="price" class="form-label">Precio:</label>
                 <input type="number" id="price" name="price" class="form-control" placeholder="Ingrese el precio" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="image" class="form-label">Imagen:</label>
+                <input type="file" id="image" name="image" class="form-control">
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-success">Guardar</button>

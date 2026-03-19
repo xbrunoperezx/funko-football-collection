@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
     <div class="py-6">
-        <form action="{{ route('funkos.update', $funko->id) }}" method="POST" class="w-50 mx-auto">
+        <form action="{{ route('funkos.update', $funko->id) }}" method="POST" enctype="multipart/form-data" class="w-50 mx-auto">
             @csrf
             @method('PUT')
             <div class="form-group mb-3">
@@ -25,6 +25,13 @@
             <div class="form-group mb-3">
                 <label for="price" class="form-label">Precio:</label>
                 <input type="number" id="price" name="price" class="form-control" value="{{ $funko->price }}" placeholder="Ingrese el precio" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="image" class="form-label">Imagen:</label>
+                <input type="file" id="image" name="image" class="form-control">
+                @if($funko->image_path)
+                    <img src="{{ asset($funko->image_path) }}" alt="Imagen actual" width="100" class="mt-2">
+                @endif
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Actualizar</button>

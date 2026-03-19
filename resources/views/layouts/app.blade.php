@@ -28,9 +28,10 @@
             @endisset
 
             <!-- Page Content -->
-              <main>
-                  {{ $slot }}
-              </main>
+                  <main>
+                      @yield('content')
+                  </main>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
 </html>

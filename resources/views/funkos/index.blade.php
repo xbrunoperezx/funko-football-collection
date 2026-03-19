@@ -20,7 +20,14 @@
                 @foreach ($funkos as $funko)
                 <tr>
                     <td class="text-center">{{ $funko->id }}</td>
-                    <td>{{ $funko->name }}</td>
+                    <td>
+                        {{ $funko->name }}<br>
+                        @if($funko->image_path)
+                            <img src="{{ asset($funko->image_path) }}" alt="{{ $funko->name }}" width="60" class="mt-2">
+                        @else
+                            <span class="text-muted">Sin imagen</span>
+                        @endif
+                    </td>
                     <td>{{ $funko->category->name }}</td>
                     <td class="text-end">${{ number_format($funko->price, 2) }}</td>
                     <td class="text-center">
