@@ -1,34 +1,35 @@
 # Resumen de Progreso del Proyecto Funko Football Collection
 
+
 ## ✅ Lo ya desarrollado
 
 ### 1. **Backend (Laravel)**
-- **Estructura MVC:**
-  - Modelos, controladores y vistas para Funkos, Categorías y Usuarios.
-- **CRUD completo:**
-  - Altas, bajas, modificaciones y listados para las 3 entidades.
-- **Relaciones:**
-  - Funkos relacionados con Categorías.
-- **Validaciones y mensajes:**
-  - Validación de formularios y mensajes de éxito/error con SweetAlert2.
-- **SweetAlert2:**
-  - Confirmación visual para eliminar registros.
-- **Estilos Bootstrap:**
-  - Tablas, formularios y botones con diseño profesional.
-- **Protección de rutas:**
-  - Solo usuarios autenticados pueden acceder al panel de administración.
-- **Autenticación:**
-  - Login, registro y dashboard implementados con Laravel Breeze.
-- **Menú de navegación:**
-  - Acceso rápido a Funkos, Categorías y Usuarios desde cualquier parte del panel.
+- Estructura MVC completa: modelos, controladores y vistas para Funkos, Categorías y Usuarios.
+- CRUD funcional para las 3 entidades (crear, leer, actualizar, eliminar).
+- Relaciones entre Funkos y Categorías implementadas.
+- Validaciones de formularios y mensajes visuales con SweetAlert2.
+- Confirmación visual para eliminar registros.
+- Estilos profesionales con Bootstrap y Tailwind en tablas, formularios y botones.
+- Protección de rutas: solo usuarios autenticados acceden al panel.
+- Autenticación con Laravel Breeze (login, registro, dashboard).
+- Menú de navegación con acceso rápido a todas las entidades.
+- Layout unificado para todas las vistas del panel.
+- Mensajes visuales de éxito/error.
 
 ### 2. **Frontend (Blade + Bootstrap/Tailwind)**
-- **Layout unificado:**
-  - Todas las vistas usan el mismo layout y menú.
-- **Vistas CRUD:**
-  - Listados, formularios de alta y edición para cada entidad.
-- **Mensajes visuales:**
-  - Uso de SweetAlert2 para feedback al usuario.
+- Layout unificado para el panel administrativo.
+- Vistas CRUD completas para cada entidad.
+- Mensajes visuales con SweetAlert2.
+- Vista pública de la tienda creada con layout exclusivo.
+- Cards de productos modernas, compactas y animadas.
+- Fondo visual con imagen y overlay degradado.
+- Diseño responsive, profesional y coherente.
+- Barra de menú elegante con iconos y buscador.
+
+### 3. **Metodología y contexto**
+- Proyecto guiado paso a paso, priorizando aprendizaje y buenas prácticas.
+- Estructura progresiva: backend robusto, frontend moderno, experiencia de usuario.
+- Documentación y seguimiento de avances.
 
 ---
 

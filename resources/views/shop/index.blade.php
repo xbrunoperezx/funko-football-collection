@@ -1,18 +1,360 @@
-@extends('layouts.app')
+@extends('layouts.shop')
 
 @section('content')
-<div class="container mx-auto py-8">
-    <h1 class="text-3xl font-bold mb-6 text-center">Catálogo de Funkos</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        @foreach($funkos as $funko)
-            <div class="bg-white rounded-lg shadow p-4 flex flex-col items-center">
-                <img src="{{ asset($funko->image_path ?? 'images/funkos/default.png') }}" alt="{{ $funko->name }}" class="w-32 h-32 object-cover mb-4">
-                <h2 class="text-xl font-semibold mb-2">{{ $funko->name }}</h2>
-                <p class="text-gray-600 mb-1">Categoría: {{ $funko->category->name ?? 'Sin categoría' }}</p>
-                <p class="text-green-600 font-bold mb-3">${{ number_format($funko->price, 2) }}</p>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Añadir al carrito</button>
+
+{{-- ============================================================
+     NAVBAR — sticky + efecto glass
+     - sticky top-0: se queda fija al hacer scroll
+     - backdrop-blur-md: desenfoca el contenido detrás
+     - bg-slate-900/80: fondo oscuro semitransparente (80% opacidad)
+     - z-50: siempre por encima del resto del contenido
+     ============================================================ --}}
+<nav class="sticky top-0 z-50 bg-slate-900 border-b border-slate-700" style="backdrop-filter: blur(12px); background-color: rgba(15,23,42,0.85);">
+    <div class="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+
+        {{-- IZQUIERDA: Logo + nombre de la tienda --}}
+        <a href="{{ route('shop') }}" class="flex items-center gap-3 group">
+            <div class="w-9 h-9 bg-amber-500 rounded-lg flex items-center justify-center shadow-lg group-hover:bg-amber-400 transition-colors duration-200">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
             </div>
-        @endforeach
+            <span class="text-xl font-bold text-white tracking-tight group-hover:text-amber-400 transition-colors duration-200">
+                FunkoShop
+            </span>
+        </a>
+
+        {{-- CENTRO: Buscador en tiempo real --}}
+        {{-- El id="search-input" lo usará JavaScript para filtrar las cards --}}
+        <div class="hidden md:flex items-center flex-1 max-w-md mx-8">
+            <div class="relative w-full">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+                </svg>
+                <input
+                    id="search-input"
+                    type="text"
+                    placeholder="Buscar funko..."
+                    class="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition duration-200"
+                >
+            </div>
+        </div>
+
+        {{-- DERECHA: Enlace catálogo + botón carrito --}}
+        <div class="flex items-center gap-6">
+            <a href="{{ route('shop') }}" class="hidden md:block text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">
+                Catálogo
+            </a>
+
+            {{-- Botón carrito con contador dinámico --}}
+            {{-- id="cart-count": JavaScript actualizará este número cuando se añada un producto --}}
+            <button
+                id="cart-btn"
+                class="relative flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-all duration-200 shadow-lg hover:shadow-amber-500/30 active:scale-95"
+            >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A2 2 0 009 18h6a2 2 0 001.95-1.55L21 9H5.4"/>
+                </svg>
+                <span>Carrito</span>
+                {{-- Este span se actualiza dinámicamente desde JS --}}
+                <span id="cart-count" class="bg-white text-amber-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    0
+                </span>
+            </button>
+        </div>
     </div>
-</div>
+</nav>
+
+
+
+
+{{-- ============================================================
+     HERO — sección de bienvenida con imagen del estadio
+     - relative + h-[500px]: altura fija para el hero
+     - overflow-hidden: recorta la imagen al contenedor
+     - El contenido (texto) usa relative z-10 para estar encima del overlay
+     ============================================================ --}}
+<section class="relative h-[500px] overflow-hidden flex items-center">
+
+    {{-- Imagen de fondo del estadio --}}
+    <img
+        src="{{ asset('images/funkos/estadio.png') }}"
+        alt="Estadio"
+        class="absolute inset-0 w-full h-full object-cover scale-105"
+    >
+
+    {{-- Overlay oscuro en degradé para que el texto sea legible --}}
+    {{-- from-slate-950: negro profundo en la izquierda --}}
+    {{-- to-slate-900/60: más transparente hacia la derecha --}}
+    <div class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-900/40"></div>
+
+    {{-- Contenido del hero: texto + estadísticas --}}
+    <div class="relative z-10 max-w-7xl mx-auto px-6 w-full">
+        <div class="max-w-2xl">
+
+            {{-- Badge superior --}}
+            <span class="inline-flex items-center gap-2 bg-amber-500/20 border border-amber-500/40 text-amber-400 text-xs font-semibold px-3 py-1 rounded-full mb-6 tracking-wide uppercase">
+                <span class="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse"></span>
+                Colección Oficial
+            </span>
+
+            {{-- Título principal — jerarquía visual con dos tamaños --}}
+            <h1 class="text-5xl md:text-6xl font-black text-white leading-tight mb-4 tracking-tight">
+                Funkos de
+                <span class="text-amber-400">Fútbol</span>
+            </h1>
+
+            {{-- Subtítulo descriptivo --}}
+            <p class="text-slate-300 text-lg mb-8 leading-relaxed">
+                Descubre la colección más completa de figuras Funko Pop de tus jugadores favoritos.
+            </p>
+
+            {{-- Estadísticas dinámicas desde PHP --}}
+            {{-- $funkos->count() y $categories->count() vienen del controlador --}}
+            <div class="flex items-center gap-8">
+                <div>
+                    <p class="text-3xl font-black text-white">{{ $funkos->count() }}</p>
+                    <p class="text-slate-400 text-sm">Funkos disponibles</p>
+                </div>
+                <div class="w-px h-10 bg-white/20"></div>
+                <div>
+                    <p class="text-3xl font-black text-white">{{ $categories->count() }}</p>
+                    <p class="text-slate-400 text-sm">Categorías</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Flecha de scroll hacia el catálogo --}}
+    {{-- href="#catalogo": enlaza con el id de la sección del grid --}}
+    <a href="#catalogo" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 hover:text-amber-400 transition-colors duration-200 animate-bounce">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+    </a>
+</section>
+
+
+{{-- ============================================================
+     CATÁLOGO — filtros + grid de productos
+     - id="catalogo": destino del enlace de la flecha del hero
+     - bg-gray-950: fondo oscuro consistente con el layout
+     ============================================================ --}}
+<section id="catalogo" class="bg-[#030712] min-h-screen py-16">
+    <div class="max-w-7xl mx-auto px-6">
+
+        {{-- Título de sección + contador de resultados --}}
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Catálogo completo</h2>
+                {{-- id="results-count": JS actualizará este número al filtrar --}}
+                <p class="text-slate-400 text-sm mt-1"><span id="results-count">{{ $funkos->count() }}</span> productos encontrados</p>
+            </div>
+        </div>
+
+        {{-- ================================================
+             FILTROS DE CATEGORÍA
+             - data-filter="all": muestra todos los funkos
+             - data-filter="{id}": muestra solo los de esa categoría
+             - active-filter: clase CSS para el botón seleccionado
+             ================================================ --}}
+        <div id="filter-buttons" class="flex flex-wrap gap-2 mb-10">
+
+            {{-- Botón "Todos" — activo por defecto --}}
+            <button
+                class="filter-btn active-filter px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none"
+                data-filter="all"
+            >
+                Todos
+            </button>
+
+            {{-- Un botón por cada categoría de la base de datos --}}
+            @foreach($categories as $category)
+                <button
+                    class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 focus:outline-none"
+                    data-filter="{{ $category->id }}"
+                >
+                    {{ $category->name }}
+                </button>
+            @endforeach
+
+        </div>
+
+        {{-- Grid de productos --}}
+        <div id="funkos-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            @foreach($funkos as $funko)
+                {{-- data-name y data-category: JS los usa para filtrar y buscar --}}
+                <div
+                    class="funko-card bg-slate-800/60 border border-slate-700/50 rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:border-amber-500/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-500/10 group"
+                    data-name="{{ strtolower($funko->name) }}"
+                    data-category="{{ $funko->category_id }}"
+                >
+                    {{-- Imagen del funko --}}
+                    <div class="relative bg-gradient-to-br from-slate-700 to-slate-800 h-52 flex items-center justify-center overflow-hidden">
+                        <img
+                            src="{{ asset($funko->image_path ?? 'images/funkos/default.png') }}"
+                            alt="{{ $funko->name }}"
+                            class="h-44 w-auto object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-110"
+                        >
+                        {{-- Badge de categoría sobre la imagen --}}
+                        <span class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-sm text-amber-400 text-xs font-medium px-2 py-1 rounded-md border border-amber-500/20">
+                            {{ $funko->category->name ?? 'Sin categoría' }}
+                        </span>
+                    </div>
+
+                    {{-- Info del producto --}}
+                    <div class="p-5 flex flex-col flex-1">
+                        <h3 class="text-white font-semibold text-base mb-1 leading-tight">{{ $funko->name }}</h3>
+                        <p class="text-slate-400 text-xs mb-4">{{ $funko->era ?? '' }}</p>
+
+                        {{-- Precio + botón en la misma fila --}}
+                        <div class="mt-auto flex items-center justify-between gap-3">
+                            <span class="text-amber-400 font-black text-xl">${{ number_format($funko->price, 2) }}</span>
+                            {{-- Botón añadir al carrito --}}
+                            {{-- data-id, data-name, data-price: JS los leerá para guardar en localStorage --}}
+                            <button
+                                class="add-to-cart flex-1 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                                data-id="{{ $funko->id }}"
+                                data-name="{{ $funko->name }}"
+                                data-price="{{ $funko->price }}"
+                                data-image="{{ asset($funko->image_path ?? 'images/funkos/default.png') }}"
+                            >
+                                + Añadir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        {{-- Mensaje cuando no hay resultados de búsqueda --}}
+        <div id="no-results" class="hidden text-center py-20">
+            <p class="text-slate-500 text-lg">No se encontraron funkos con ese criterio.</p>
+        </div>
+
+    </div>
+</section>
+
+
+{{-- ============================================================
+     ESTILOS CSS personalizados
+     ============================================================ --}}
+<style>
+    /* Animación fade-in para las cards al cargar */
+    @keyframes fade-in-up {
+        0%   { opacity: 0; transform: translateY(24px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+    .funko-card {
+        animation: fade-in-up 0.5s ease forwards;
+    }
+    /* Escalonamos la animación de cada card */
+    .funko-card:nth-child(1)  { animation-delay: 0.05s; }
+    .funko-card:nth-child(2)  { animation-delay: 0.10s; }
+    .funko-card:nth-child(3)  { animation-delay: 0.15s; }
+    .funko-card:nth-child(4)  { animation-delay: 0.20s; }
+    .funko-card:nth-child(5)  { animation-delay: 0.25s; }
+    .funko-card:nth-child(6)  { animation-delay: 0.30s; }
+    .funko-card:nth-child(7)  { animation-delay: 0.35s; }
+    .funko-card:nth-child(8)  { animation-delay: 0.40s; }
+
+    /* Estilos del botón de filtro activo */
+    .filter-btn {
+        background-color: rgba(51, 65, 85, 0.6); /* slate-700/60 */
+        color: #94a3b8; /* slate-400 */
+        border: 1px solid rgba(71, 85, 105, 0.5);
+    }
+    .filter-btn:hover {
+        background-color: rgba(71, 85, 105, 0.8);
+        color: #fff;
+    }
+    /* Botón activo — color ámbar */
+    .filter-btn.active-filter {
+        background-color: #f59e0b; /* amber-500 */
+        color: #fff;
+        border-color: #f59e0b;
+    }
+</style>
+
 @endsection
+
+
+{{-- ============================================================
+     JAVASCRIPT — Filtros por categoría + buscador en tiempo real
+     Usamos @push('scripts') para inyectarlo en @stack('scripts')
+     del layout, justo antes de cerrar el </body>
+     ============================================================ --}}
+@push('scripts')
+<script>
+    // Esperamos a que el DOM esté completamente cargado
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ── Referencias a los elementos del DOM ──────────────────
+        const searchInput   = document.getElementById('search-input');   // buscador navbar
+        const filterBtns    = document.querySelectorAll('.filter-btn');   // botones de categoría
+        const funkoCards    = document.querySelectorAll('.funko-card');   // todas las cards
+        const noResults     = document.getElementById('no-results');      // mensaje vacío
+        const resultsCount  = document.getElementById('results-count');   // contador texto
+
+        // Estado actual del filtro activo ("all" por defecto)
+        let activeFilter = 'all';
+
+        // ── Función principal de filtrado ─────────────────────────
+        // Combina búsqueda por nombre Y filtro por categoría
+        function applyFilters() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let visible = 0;
+
+            funkoCards.forEach(function (card) {
+                const cardName     = card.dataset.name;      // ej: "beckenbauer"
+                const cardCategory = card.dataset.category;  // ej: "2"
+
+                // ¿Coincide con la búsqueda de texto?
+                const matchesSearch = cardName.includes(searchTerm);
+
+                // ¿Coincide con el filtro de categoría?
+                // Si el filtro es "all" → siempre true
+                const matchesFilter = (activeFilter === 'all') || (cardCategory === activeFilter);
+
+                // Mostrar u ocultar según ambas condiciones
+                if (matchesSearch && matchesFilter) {
+                    card.style.display = '';   // muestra la card
+                    visible++;
+                } else {
+                    card.style.display = 'none'; // oculta la card
+                }
+            });
+
+            // Actualizar el contador de resultados visibles
+            resultsCount.textContent = visible;
+
+            // Mostrar el mensaje "sin resultados" si no hay nada
+            noResults.classList.toggle('hidden', visible > 0);
+        }
+
+        // ── Evento: escribir en el buscador ───────────────────────
+        searchInput.addEventListener('input', applyFilters);
+
+        // ── Evento: pulsar un botón de categoría ─────────────────
+        filterBtns.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+
+                // Quitar la clase activa de todos los botones
+                filterBtns.forEach(function (b) {
+                    b.classList.remove('active-filter');
+                });
+
+                // Poner la clase activa en el botón pulsado
+                btn.classList.add('active-filter');
+
+                // Guardar el filtro activo ("all" o el id de categoría)
+                activeFilter = btn.dataset.filter;
+
+                // Aplicar los filtros combinados
+                applyFilters();
+            });
+        });
+
+    }); // fin DOMContentLoaded
+</script>
+@endpush

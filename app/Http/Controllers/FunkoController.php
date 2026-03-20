@@ -79,7 +79,12 @@ class FunkoController extends Controller
         {
             // Recuperar todos los funkos con su categoría
             $funkos = Funko::with('category')->get();
-            return view('shop.index', compact('funkos'));
+
+            // Recuperar todas las categorías para los filtros de la tienda
+            $categories = Category::all();
+
+            // Pasamos ambas variables a la vista
+            return view('shop.index', compact('funkos', 'categories'));
         }
 
    // FUNCION  Retorna la vista para editar un Funko en el formulario
