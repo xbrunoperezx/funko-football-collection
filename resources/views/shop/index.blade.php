@@ -235,6 +235,51 @@
     </div>
 </section>
 
+{{-- OVERLAY: fondo oscuro detrás del drawer --}}
+{{-- Al pulsar encima, se cierra el carrito --}}
+<div id="cart-overlay"
+     class="fixed inset-0 bg-black/60 z-40 hidden"
+     style="backdrop-filter: blur(2px);">
+</div>
+
+{{-- DRAWER: panel lateral del carrito --}}
+<div id="cart-drawer" 
+    class = "fixed top-0 right-0 h-full w-96 bg-slate-900 z-50 flex flex-col shadow-2xl border-l border-slate-700" 
+    style="transform: translateX(100%); transition: transform 0.3s ease;">
+
+    {{-- Cabecera del Drawer --}}
+    <div class="flex items-center justify-between px-6 py-5 border-b border-slate-700">
+        <h2 class="text-white font-bold text-lg">Tu carrito</h2>
+
+        {{-- Botón cerrar --}}
+        <button id="cart-close" class="text-slate-400 hover:text-white transition">
+            {{-- Icono X --}}
+             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>     
+        </button>
+    </div>
+
+    {{-- Lista de productos (JS la llenara aqui) --}}
+    <div id="cart-items" class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        {{-- JS inyectara los items aqui --}}
+    </div>
+
+    {{-- Pie del drawer: subtotal + boton --}}
+    <div class="px-6 py-5 border-t border-slate-700">
+        <div class="flex items-center justify-between mb-4">
+            <span class="text-slate-400 text-sm">Total</span>
+            <span id="cart-total" class="text-white font-black text-xl">$0.00</span>
+        </div>
+        <button class="w-full bg-amber-500 hover:bg-amber-400 text-white font-semibold py-3 rounded-xl transition-all duration-200 active:scale-95">
+            Finalizar compra
+        </button>
+    </div>
+</div>
+
+
+
+
 
 {{-- ============================================================
      ESTILOS CSS personalizados
@@ -356,5 +401,172 @@
         });
 
     }); // fin DOMContentLoaded
+
+    // ============================================================
+    // CARRITO — localStorage
+    // ============================================================
+
+    //***1. Leer y guardar el carrito ─────────────────────────────
+
+    // Obtiene el carrito desde localStorage
+    // Si no existe todavía, devuelve un array vacío []
+    function getCart() {
+        return JSON.parse(localStorage.getItem('funko_cart') || '[]');
+    }
+    
+    //Guardar el array del carrito en localStorage com otexto JSON
+    function saveCart(cart) {
+        localStorage.setItem('funko_cart', JSON.stringify(cart));
+    }
+
+    // 2. Actualizar el contador del carrito de la navbar el numero de cosas añadidas -----------------
+
+    //suma las cantidades de todos los items y actualiza el #cart-count contador de carrito
+    function updateCartCount() {
+        const cart = getCart();
+        // reduce()-> recorre el array sumando las cantidades
+        const total = cart.reduce(function(sum,item) {
+            return sum + item.quantity;
+        }, 0); //el 0 es el valor inicial
+        document.getElementById('cart-count').textContent = total;
+    }
+
+    // 3. Añadir porducto al carrito-------------------
+
+    //lee los data-* del boton pulsado y añade el producto
+    function addToCart(btn) {
+        const id = btn.dataset.id;
+        const name = btn.dataset.name;
+        const price = parseFloat(btn.dataset.price); //string -> numero
+        const image = btn.dataset.image;
+
+        let cart = getCart();
+
+        // comprobar si ya existe el producto en el carrito
+        const existing = cart.find(function(item) {
+            return item.id === id;
+        });
+
+        if (existing) {
+            //si ya existe -> incrementamos la cantidad
+            existing.quantity += 1;
+        } else {
+            //si no existe -> añadimos con quantity: 1
+            cart.push({ id, name, price, image, quantity: 1});
+        }
+
+        //llamamos a las funciones:
+        saveCart(cart);   //guardar en localStorage
+        updateCartCount();  //actualizar el numero en el navbar del carrito
+        renderCart();   //actualiza el contenido del drawer (FALTA INPLEMENTAR LA FUNCION)
+        showToast(name);   //mostrar notificacion(FALTA INPLEMENTAR)
+
+    }
+
+    // 4. Eliminar productos del carrito-------------------
+
+    function removeFromCart(id) {
+        //filter() -> devuelve u nnuevo array sin el item con ese id eliminado
+        let cart = getCart().filter(function(item) {
+            return item.id !== id;
+        });
+        saveCart(cart);   //guardar en localStorage
+        updateCartCount();  //actualizar el numero en el navbar del carrito
+        renderCart();   //actualiza el contenido del drawer (FALTA INPLEMENTAR LA FUNCION)
+     }
+
+     // 5. Pintar los items en el drawer (ventana oculta del carrito)
+
+     function renderCart() {
+        const cart = getCart();
+        const container = document.getElementById('cart-items');
+        const totalEl = document.getElementById('cart-total');
+
+        //si el carrito esta vacio -> mostraremos el mensaje
+        if(cart.length ===0) {
+            container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-center py-16">
+                <p class="text-slate-500 text-sm mt-3">Tu carrito está vacío</p>
+            </div>`;
+            totalEl.textContent = '$0.00';
+            return;
+        }
+
+        //construimos ahroa el HTML de cada item
+        let html = '';
+        let total = 0;
+
+        cart.forEach(function(item) {
+            total += item.price * item.quantity;
+            html += `
+            <div class="flex items-center gap-3 bg-slate-800 rounded-xl p-3">
+                <img src="${item.image}" class="w-12 h-14 object-contain rounded-lg bg-slate-700 p-1">
+                <div class="flex-1 min-w-0">
+                    <p class="text-white text-sm font-medium truncate">${item.name}</p>
+                    <p class="text-amber-400 text-sm font-bold">$${(item.price * item.quantity).toFixed(2)}</p>
+                    <p class="text-slate-500 text-xs">Cantidad: ${item.quantity}</p>
+                </div>
+                <button onclick="removeFromCart('${item.id}')"
+                        class="text-slate-500 hover:text-red-400 transition p-1 rounded-lg hover:bg-slate-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>`;
+        });
+       
+        container.innerHTML = html;
+        totalEl.textContent = '$' + total.toFixed(2);
+
+     }
+
+     // 6. Abrir y cerrar el drawer ventana oculta-------------------
+
+     function openCart() {
+        document.getElementById('cart-drawer').style.transform = 'translateX(0)';
+        document.getElementById('cart-overlay').classList.remove('hidden');
+        renderCart(); // refrescar contenido al abrir
+     }
+
+     function closeCart() {
+        document.getElementById('cart-drawer').style.transform = 'translateX(100%)';
+        document.getElementById('cart-overlay').classList.add('hidden');
+     }
+
+     // 7. toast de confirmacion----------------
+
+     function showToast(name) {
+        //crear el elemento toas dinamicamente
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 z-[100] bg-slate-800 border border-amber-500/40 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300';
+        toast.innerHTML = `
+            <span class="text-amber-400">✓</span>
+            <span class="text-sm"><strong>${name}</strong> añadido al carrito</span>`;
+
+        document.body.appendChild(toast);
+
+        // Eliminar el toast después de 2.5 segundos
+        setTimeout(function() { toast.remove(); }, 2500);
+     }
+
+
+     // 8. Eventos.------------------------------------------------
+
+     //Abrir carrito al pulsar el boton  en navbar
+     document.getElementById('cart-btn').addEventListener('click', openCart)
+
+     // Cerrar al pulsar la X del drawer
+     document.getElementById('cart-close').addEventListener('click', closeCart);
+
+     // Cerrar al pulsar el overlay de fondo
+     document.getElementById('cart-overlay').addEventListener('click', closeCart);
+
+     // Añadir al carrito al pulsar "+ Añadir" en cualquier card
+     document.querySelectorAll('.add-to-cart').forEach(function(btn) {
+        btn.addEventListener('click', function() { addToCart(btn); });
+     });
+
+     // Al cargar la página → restaurar el contador desde localStorage
+     updateCartCount();
 </script>
 @endpush

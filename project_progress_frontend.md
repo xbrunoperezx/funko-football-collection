@@ -170,18 +170,102 @@ Sin esto, el navegador usa el CSS anterior y las clases nuevas no se aplican.
 
 ---
 
+## ✅ Sesión 23/03/2026 — Carrito con localStorage
+
+### Pieza 1 — Drawer HTML (escrito por el alumno)
+
+Panel lateral oculto fuera de pantalla que se desliza desde la derecha:
+
+```
+CERRADO:  translateX(100%)  →  fuera de pantalla
+ABIERTO:  translateX(0)     →  visible
+```
+
+Elementos clave añadidos al `index.blade.php`:
+
+| id | Elemento | Para qué sirve |
+|---|---|---|
+| `cart-overlay` | Div fondo oscuro | Se muestra al abrir, cierra el drawer al pulsarlo |
+| `cart-drawer` | Panel lateral | Contenedor principal del carrito |
+| `cart-close` | Botón X | Cierra el drawer |
+| `cart-items` | Div vacío | JS inyecta aquí los productos |
+| `cart-total` | Span | JS actualiza el precio total |
+
+Técnica CSS del drawer:
+```css
+/* Por defecto: oculto fuera de pantalla */
+transform: translateX(100%);
+transition: transform 0.3s ease;
+
+/* Al abrir: desliza a su posición */
+transform: translateX(0);
+```
+
+---
+
+### Pieza 2 — JavaScript del carrito (escrito por el alumno)
+
+Ubicado en `@push('scripts')`. Funciones implementadas:
+
+#### `getCart()` / `saveCart(cart)`
+```javascript
+// Lee el carrito de localStorage (o [] si está vacío)
+JSON.parse(localStorage.getItem('funko_cart') || '[]')
+
+// Guarda el array como texto JSON
+localStorage.setItem('funko_cart', JSON.stringify(cart))
+```
+
+#### `updateCartCount()`
+- Usa `reduce()` para sumar todas las `quantity` del carrito
+- Actualiza el texto de `#cart-count` en la navbar
+
+#### `addToCart(btn)`
+- Lee `data-id`, `data-name`, `data-price`, `data-image` del botón pulsado
+- Usa `find()` para detectar si el producto ya existe → si existe, incrementa `quantity`; si no, hace `push()`
+- Llama a `saveCart` → `updateCartCount` → `renderCart` → `showToast`
+
+#### `removeFromCart(id)`
+- Usa `filter()` para devolver un nuevo array sin el producto eliminado
+- Llama a `saveCart` → `updateCartCount` → `renderCart`
+
+#### `renderCart()`
+- Si el carrito está vacío → muestra mensaje "Tu carrito está vacío"
+- Si tiene items → construye HTML con template literals y lo inyecta en `#cart-items`
+- Calcula el total acumulado y lo muestra en `#cart-total`
+
+#### `openCart()` / `closeCart()`
+- Cambia el `style.transform` del drawer entre `translateX(0)` y `translateX(100%)`
+- Muestra/oculta el overlay con `classList.remove/add('hidden')`
+
+#### `showToast(name)`
+- Crea un `div` dinámicamente con `document.createElement`
+- Lo añade al `body` → se elimina automáticamente a los 2.5 segundos con `setTimeout`
+
+#### Eventos registrados
+```javascript
+cart-btn     → click → openCart()
+cart-close   → click → closeCart()
+cart-overlay → click → closeCart()
+.add-to-cart → click → addToCart(btn)
+// Al cargar la página:
+updateCartCount() // restaura el contador desde localStorage
+```
+
+---
+
+
+
+---
+
 ## ⏳ Lo que queda por hacer
 
-### 🛒 Carrito con localStorage — PRÓXIMA SESIÓN
-- [ ] Panel lateral deslizante (drawer) que se abre al pulsar `#cart-btn`
-- [ ] Lógica JS con `localStorage`:
-  - `addToCart(id, name, price, image)` al pulsar `.add-to-cart`
-  - `removeFromCart(id)` para eliminar un producto del carrito
-  - `updateCartCount()` → actualiza `#cart-count` en la navbar
-  - `renderCart()` → pinta los items dentro del drawer
-- [ ] Toast/notificación al añadir un producto ("✓ Añadido al carrito")
-- [ ] Subtotal calculado dinámicamente
-- [ ] Persistencia: el carrito se mantiene al recargar la página (localStorage)
+### 🛒 Carrito con localStorage
+- [x] Panel lateral deslizante (drawer)
+- [x] `addToCart`, `removeFromCart`, `renderCart`, `updateCartCount`
+- [x] Toast de confirmación al añadir producto
+- [x] Subtotal calculado dinámicamente
+- [x] Persistencia con localStorage
 
 ### 🎨 Mejoras visuales pendientes
 - [ ] Footer de la tienda
