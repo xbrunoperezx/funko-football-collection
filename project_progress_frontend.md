@@ -275,13 +275,15 @@ updateCartCount() // restaura el contador desde localStorage
 
 ---
 
-## 🗺️ Ruta de trabajo recomendada
+## 🗺️ Ruta de trabajo recomendada (actualizada 23/03/2026)
 
-1. **Carrito con localStorage** → drawer lateral + toast
-2. **Footer** de la tienda
-3. **Responsive mobile** → navbar hamburguesa
-4. **Checkout simulado** → formulario de datos
-5. **Dashboard admin** → estadísticas reales
+1. ✅ **Navbar + Hero + Filtros + Buscador** — completado 20/03
+2. ✅ **Carrito con localStorage** — completado 23/03
+3. ⏳ **Footer** de la tienda ← próxima sesión
+4. ⏳ **Navbar responsive** → menú hamburguesa mobile
+5. ⏳ **Backend**: campo `stock` en `funkos` + tabla `orders`
+6. ⏳ **Checkout completo**: formulario → pedido → confirmación + vaciar carrito
+7. ⏳ **Login/registro opcional** en la tienda (`@guest` / `@auth` en navbar)
 
 ---
 

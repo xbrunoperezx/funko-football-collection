@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        {{-- DERECHA: Enlace catálogo + botón carrito --}}
+        {{-- DERECHA: Enlace catálogo + botón carrito + hamburgesa --}}
         <div class="flex items-center gap-6">
             <a href="{{ route('shop') }}" class="hidden md:block text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">
                 Catálogo
@@ -61,7 +61,40 @@
                     0
                 </span>
             </button>
+
+            {{-- Botón hamburguesa — solo visible en mobile (md:hidden) --}}
+            {{-- id="menu-btn": JS lo usará para abrir/cerrar el menú --}}
+            <button id="menu-btn" class="md:hidden text-slate-300 hover:text-white transition-colors duration-200 focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
         </div>
+    </div>
+
+    {{-- MENU MOBILE - oculto por defecto, se muesrta la pulsar ☰ --}}
+    {{-- id="mobile-menu": JS añade/quita la clase 'hiden' --}}
+    <div id="mobile-menu" class="hidden md:hidden border-t border-slate-700 px-6 py-4 space-y-3">
+
+        {{-- Buscador mobile --}}
+        {{-- id="search-input-mobile": sincronizaremos con el buscador principal --}}
+        <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+            </svg>
+            <input
+                id="search-input-mobile"
+                type="text"
+                placeholder="Buscar funko..."
+                class="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition duration-200"
+            >
+        </div>
+
+        {{-- Enlace catálogo mobile --}}
+        <a href="{{ route('shop') }}" class="block text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors duration-200 py-1">
+            Catálogo
+        </a>
+
     </div>
 </nav>
 
@@ -278,6 +311,80 @@
 </div>
 
 
+{{-- ============================================================
+     FOOTER
+     - border-t: línea separadora con la sección anterior
+     - grid md:grid-cols-3: 3 columnas en desktop, 1 en mobile
+     ============================================================ --}}
+<footer class="bg-slate-900 border-t border-slate-800 mt-0">
+
+    {{-- Cuerpo del footer: 3 columnas --}}
+    <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+
+        {{-- Columna 1: Marca y descripción --}}
+        <div>
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                </div>
+                <span class="text-white font-bold text-lg">FunkoShop</span>
+            </div>
+            <p class="text-slate-400 text-sm leading-relaxed">
+                La colección más completa de figuras Funko Pop de fútbol. Leyendas del deporte en tu estantería.
+            </p>
+        </div>
+
+        {{-- Columna 2: Navegación --}}
+        <div>
+            <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Tienda</h4>
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ route('shop') }}" class="text-slate-400 text-sm hover:text-amber-400 transition-colors duration-200">
+                        Catálogo completo
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('shop') }}#catalogo" class="text-slate-400 text-sm hover:text-amber-400 transition-colors duration-200">
+                        Ver productos
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        {{-- Columna 3: Información --}}
+        <div>
+            <h4 class="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Información</h4>
+            <ul class="space-y-2">
+                <li>
+                    <span class="text-slate-400 text-sm">Envíos a toda España</span>
+                </li>
+                <li>
+                    <span class="text-slate-400 text-sm">Colecciones oficiales</span>
+                </li>
+                <li>
+                    <span class="text-slate-400 text-sm">Ediciones limitadas</span>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    {{-- Barra inferior: copyright --}}
+    <div class="border-t border-slate-800 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <p class="text-slate-500 text-xs">
+                © {{ date('Y') }} FunkoShop. Todos los derechos reservados.
+            </p>
+            <p class="text-slate-600 text-xs">
+                Hecho con Laravel + Tailwind
+            </p>
+        </div>
+    </div>
+
+</footer>
+
 
 
 
@@ -473,11 +580,11 @@
         saveCart(cart);   //guardar en localStorage
         updateCartCount();  //actualizar el numero en el navbar del carrito
         renderCart();   //actualiza el contenido del drawer (FALTA INPLEMENTAR LA FUNCION)
-     }
+    }
 
      // 5. Pintar los items en el drawer (ventana oculta del carrito)
 
-     function renderCart() {
+    function renderCart() {
         const cart = getCart();
         const container = document.getElementById('cart-items');
         const totalEl = document.getElementById('cart-total');
@@ -518,24 +625,24 @@
         container.innerHTML = html;
         totalEl.textContent = '$' + total.toFixed(2);
 
-     }
+    }
 
      // 6. Abrir y cerrar el drawer ventana oculta-------------------
 
-     function openCart() {
+    function openCart() {
         document.getElementById('cart-drawer').style.transform = 'translateX(0)';
         document.getElementById('cart-overlay').classList.remove('hidden');
         renderCart(); // refrescar contenido al abrir
-     }
+    }
 
-     function closeCart() {
+    function closeCart() {
         document.getElementById('cart-drawer').style.transform = 'translateX(100%)';
         document.getElementById('cart-overlay').classList.add('hidden');
-     }
+    }
 
      // 7. toast de confirmacion----------------
 
-     function showToast(name) {
+    function showToast(name) {
         //crear el elemento toas dinamicamente
         const toast = document.createElement('div');
         toast.className = 'fixed bottom-6 right-6 z-[100] bg-slate-800 border border-amber-500/40 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300';
@@ -547,7 +654,7 @@
 
         // Eliminar el toast después de 2.5 segundos
         setTimeout(function() { toast.remove(); }, 2500);
-     }
+    }
 
 
      // 8. Eventos.------------------------------------------------
@@ -568,5 +675,25 @@
 
      // Al cargar la página → restaurar el contador desde localStorage
      updateCartCount();
+
+
+
+     // ── Menú mobile: botón hamburguesa ───────────────────────────
+    // toggle('hidden') → si tiene la clase 'hidden' la quita, si no la añade
+    const menuBtn    = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuBtn.addEventListener('click', function() {
+        mobileMenu.classList.toggle('hidden');
+    });
+
+    // Buscador mobile sincronizado con el buscador de desktop
+    // Al escribir en mobile → también aplica los filtros
+    const searchInputMobile = document.getElementById('search-input-mobile');
+    searchInputMobile.addEventListener('input', function() {
+        // Copiamos el valor al input principal y lanzamos el filtro
+        searchInput.value = searchInputMobile.value;
+        applyFilters();
+    });
 </script>
 @endpush
