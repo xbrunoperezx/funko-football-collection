@@ -258,6 +258,61 @@ updateCartCount() // restaura el contador desde localStorage
 
 ---
 
+## ✅ Sesión 24/03/2026 — Footer + Navbar responsive (hamburguesa)
+
+### Pieza 1 — Footer 3 columnas
+
+Añadido al final de `shop/index.blade.php`, antes de `@endsection`.
+
+**Estructura:**
+```
+┌──────────────────────────────────────────────────────┐
+│  ⭐ FunkoShop          Tienda         Información     │
+│  Descripción...        Catálogo       Envíos España   │
+│                        Ver productos  Ed. limitadas   │
+├──────────────────────────────────────────────────────┤
+│  © 2026 FunkoShop. Todos los derechos reservados.    │
+└──────────────────────────────────────────────────────┘
+```
+
+- `grid-cols-1 md:grid-cols-3 gap-10` → 3 columnas en desktop, 1 en mobile
+- `{{ date('Y') }}` → año dinámico (no hardcodeado), para que se actualice el año solo
+- `bg-slate-900 border-t border-slate-800` → consistente con el navbar
+- `mt-0` → pegado a la sección del catálogo sin espacio
+
+---
+
+### Pieza 2 — Navbar responsive (menú hamburguesa)
+
+**Elementos añadidos:**
+
+| id / clase | Elemento | Para qué sirve |
+|---|---|---|
+| `#menu-btn` | Botón hamburguesa ☰ | Solo visible en mobile (`md:hidden`), abre el menú |
+| `#mobile-menu` | Div menú desplegable | Oculto por defecto (`hidden md:hidden`) |
+| `#search-input-mobile` | Input buscador mobile | Sincronizado con `#search-input` del desktop |
+
+**Posición del botón hamburguesa:** a la **derecha del carrito** → orden final en mobile: `Logo | 🛒 ☰`
+
+**JavaScript añadido en `@push('scripts')`:**
+```javascript
+// Toggle del menú mobile
+menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+});
+
+// Sincronización buscador mobile → desktop
+searchInputMobile.addEventListener('input', function () {
+    searchInput.value = this.value;
+    applyFilters();
+});
+```
+
+**Concepto clave — `classList.toggle('hidden')`:**
+Si el elemento tiene la clase `hidden` → la quita (muestra). Si no la tiene → la añade (oculta). Un solo método para abrir y cerrar.
+
+---
+
 ## ⏳ Lo que queda por hacer
 
 ### 🛒 Carrito con localStorage
@@ -267,21 +322,21 @@ updateCartCount() // restaura el contador desde localStorage
 - [x] Subtotal calculado dinámicamente
 - [x] Persistencia con localStorage
 
-### 🎨 Mejoras visuales pendientes
-- [ ] Footer de la tienda
-- [ ] Menú hamburguesa en mobile (navbar responsive)
+### 🎨 Mejoras visuales
+- [x] Footer de la tienda
+- [x] Menú hamburguesa en mobile (navbar responsive)
 - [ ] Modal o página de detalle del funko (opcional)
 - [ ] Checkout simulado (formulario de datos, sin pasarela real)
 
 ---
 
-## 🗺️ Ruta de trabajo recomendada (actualizada 23/03/2026)
+## 🗺️ Ruta de trabajo recomendada (actualizada 24/03/2026)
 
 1. ✅ **Navbar + Hero + Filtros + Buscador** — completado 20/03
 2. ✅ **Carrito con localStorage** — completado 23/03
-3. ⏳ **Footer** de la tienda ← próxima sesión
-4. ⏳ **Navbar responsive** → menú hamburguesa mobile
-5. ⏳ **Backend**: campo `stock` en `funkos` + tabla `orders`
+3. ✅ **Footer** de la tienda — completado 24/03
+4. ✅ **Navbar responsive** → menú hamburguesa mobile — completado 24/03
+5. ✅ **Backend**: campo `stock` en `funkos` + tabla `orders` — completado 24/03
 6. ⏳ **Checkout completo**: formulario → pedido → confirmación + vaciar carrito
 7. ⏳ **Login/registro opcional** en la tienda (`@guest` / `@auth` en navbar)
 
@@ -299,3 +354,8 @@ updateCartCount() // restaura el contador desde localStorage
 | Tailwind JIT requiere `npm run build` al añadir clases nuevas | Diagnóstico estilos rotos |
 | `sticky top-0 z-50` + `backdrop-filter` → navbar glass | Navbar |
 | `position: absolute` en imagen + overlay degradado → hero | Hero section |
+| `localStorage` → persistencia del carrito sin backend | Cart JS |
+| `document.createElement` + `setTimeout` → toast dinámico | `showToast()` |
+| `classList.toggle('hidden')` → abrir/cerrar menú con un método | Hamburger JS |
+| `grid-cols-1 md:grid-cols-3` → footer responsive | Footer |
+| `{{ date('Y') }}` → año dinámico en Blade | Footer copyright |

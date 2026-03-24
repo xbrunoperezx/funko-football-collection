@@ -15,6 +15,7 @@ class Funko extends Model {
         'image_path',
         'description',
         'price',
+        'stock',
         'category_id',
     ];
 
