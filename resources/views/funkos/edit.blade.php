@@ -27,6 +27,10 @@
                 <input type="number" id="price" name="price" class="form-control" value="{{ $funko->price }}" placeholder="Ingrese el precio" required>
             </div>
             <div class="form-group mb-3">
+                <label for="stock" class="form-label">Stock (unidades disponibles):</label>
+                <input type="number" id="stock" name="stock" class="form-control" value="{{ $funko->stock }}" min="0" required>
+            </div>
+            <div class="form-group mb-3">
                 <label for="image" class="form-label">Imagen:</label>
                 <input type="file" id="image" name="image" class="form-control">
                 @if($funko->image_path)

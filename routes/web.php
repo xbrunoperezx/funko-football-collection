@@ -5,6 +5,7 @@ use App\Http\Controllers\FunkoController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -33,5 +34,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', CategoryController::class);
     Route::resource('users', UserController::class);
 });
+
+// Rutas para el formulario , guardar pedido y de la confirmacion de compra
+Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/gracias/{order}', [OrderController::class , 'thanks'])->name('checkout.thanks');
 
 require __DIR__.'/auth.php';

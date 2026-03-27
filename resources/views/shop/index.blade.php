@@ -143,11 +143,18 @@
             </p>
 
             {{-- Estadísticas dinámicas desde PHP --}}
-            {{-- $funkos->count() y $categories->count() vienen del controlador --}}
+            {{-- $funkos->count() = modelos distintos --}}
+            {{-- $funkos->sum('stock') = unidades totales en stock --}}
+            {{-- $categories->count() viene del controlador --}}
             <div class="flex items-center gap-8">
                 <div>
                     <p class="text-3xl font-black text-white">{{ $funkos->count() }}</p>
-                    <p class="text-slate-400 text-sm">Funkos disponibles</p>
+                    <p class="text-slate-400 text-sm">Modelos de funko</p>
+                </div>
+                <div class="w-px h-10 bg-white/20"></div>
+                <div>
+                    <p class="text-3xl font-black text-white">{{ $funkos->sum('stock') }}</p>
+                    <p class="text-slate-400 text-sm">Unidades en stock</p>
                 </div>
                 <div class="w-px h-10 bg-white/20"></div>
                 <div>
@@ -267,7 +274,9 @@
 
     </div>
 </section>
-
+{{-- ============================================================
+     CRACCION--DRAWER (VENTANA LATERLA COULTA DEL CARRITO)
+============================================================ --}}
 {{-- OVERLAY: fondo oscuro detrás del drawer --}}
 {{-- Al pulsar encima, se cierra el carrito --}}
 <div id="cart-overlay"
@@ -304,11 +313,69 @@
             <span class="text-slate-400 text-sm">Total</span>
             <span id="cart-total" class="text-white font-black text-xl">$0.00</span>
         </div>
-        <button class="w-full bg-amber-500 hover:bg-amber-400 text-white font-semibold py-3 rounded-xl transition-all duration-200 active:scale-95">
-            Finalizar compra
+        <button
+        id="checkout-btn" 
+        class="w-full bg-amber-500 hover:bg-amber-400 text-white font-semibold py-3 rounded-xl transition-all duration-200 active:scale-95">
+        Finalizar compra
         </button>
     </div>
 </div>
+
+
+{{-- ============================================================
+     MODAL CHECKOUT — formulario de datos del comprador
+     - fixed inset-0: cubre toda la pantalla
+     - z-[60]: por encima del drawer (z-50)
+     - hidden por defecto, JS lo muestra al pulsar "Finalizar compra"
+     ============================================================ --}}
+<div id="checkout-modal" class="fixed inset-0 z-[60] hidden flex items-center justify-center px-4"
+     style="background-color: rgba(0,0,0,0.75); backdrop-filter: blur(4px);">
+
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-8 relative">
+
+        {{-- Botón cerrar --}}
+        <button id="checkout-modal-close" class="absolute top-4 right-4 text-slate-400 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <h2 class="text-white font-bold text-xl mb-6">Datos de envío</h2>
+
+        {{-- Formulario que hace POST a /checkout --}}
+        <form id="checkout-form" method="POST" action="{{ route('checkout.store') }}">
+            @csrf
+
+            {{-- Campo oculto donde JS meterá el carrito como JSON --}}
+            <input type="hidden" name="cart" id="cart-input">
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-slate-400 text-sm mb-1">Nombre completo</label>
+                    <input type="text" name="name" required
+                           class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-sm mb-1">Email</label>
+                    <input type="email" name="email" required
+                           class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-sm mb-1">Dirección de envío</label>
+                    <textarea name="address" required rows="3"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"></textarea>
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="w-full mt-6 bg-amber-500 hover:bg-amber-400 text-white font-semibold py-3 rounded-xl transition-all duration-200 active:scale-95">
+                Confirmar pedido
+            </button>
+        </form>
+
+    </div>
+</div>
+
 
 
 {{-- ============================================================
@@ -694,6 +761,42 @@
         // Copiamos el valor al input principal y lanzamos el filtro
         searchInput.value = searchInputMobile.value;
         applyFilters();
+    });
+
+    // ── Modal de checkout ─────────────────────────────────────────
+    const checkoutBtn        = document.getElementById('checkout-btn');
+    const checkoutModal      = document.getElementById('checkout-modal');
+    const checkoutModalClose = document.getElementById('checkout-modal-close');
+    const checkoutForm       = document.getElementById('checkout-form');
+    const cartInput          = document.getElementById('cart-input');
+
+    // Abrir el modal al pulsar "Finalizar compra"
+    checkoutBtn.addEventListener('click', function () {
+        const cart = getCart();
+
+        // No permitir abrir el modal si el carrito está vacío
+        if (cart.length === 0) {
+            showToast('Añade productos antes de finalizar');
+            return;
+        }
+
+        // Meter el carrito como JSON en el campo oculto del formulario
+        cartInput.value = JSON.stringify(cart);
+
+        // Mostrar el modal
+        checkoutModal.classList.remove('hidden');
+    });
+
+    // Cerrar el modal con el botón X
+    checkoutModalClose.addEventListener('click', function () {
+        checkoutModal.classList.add('hidden');
+    });
+
+    // Cerrar el modal al pulsar fuera del recuadro
+    checkoutModal.addEventListener('click', function (e) {
+        if (e.target === checkoutModal) {
+            checkoutModal.classList.add('hidden');
+        }
     });
 </script>
 @endpush

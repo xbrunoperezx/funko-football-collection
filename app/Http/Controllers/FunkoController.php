@@ -36,6 +36,7 @@ class FunkoController extends Controller
             'name' => 'required|string|max:225',
             'category' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,bmp|max:4096'
         ]);
 
@@ -108,6 +109,7 @@ class FunkoController extends Controller
             'name' => 'required|string|max:225',
             'category' => 'required|integer|exists:categories,id',
             'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,bmp|max:4096'
         ]);
 
@@ -119,6 +121,7 @@ class FunkoController extends Controller
             'name' => $validatedData['name'],
             'category_id' => $validatedData['category'],
             'price' => $validatedData['price'],
+            'stock' => $validatedData['stock'],
         ];
 
         // Manejar la imagen si se sube
