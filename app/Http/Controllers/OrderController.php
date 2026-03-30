@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\Funko;
 
-class OrderController extends Controller
-{
+class OrderController extends Controller {
   public function store(Request $request) {
         // 1. validar los datos del formulario
         $validated = $request->validate([
@@ -49,5 +48,26 @@ class OrderController extends Controller
 
     public function thanks($order) {
         return view('shop.thankyou', ['orderId' => $order]);
+    }
+
+    public function index() {
+
+        // Traer todos los pedidos, los más recientes primero
+        // with('user') → carga el usuario relacionado si existe (puede ser null)
+        $orders = Order::with('user')->latest()->get();
+
+        return view('orders.index', compact('orders'));
+    }
+
+    public function update(Request $request, Order $order) {
+    
+        // Validar que el estado sea uno de los tres valores permitidos
+        $request->validate([
+            'status' => 'required|in:pending,paid,shipped',
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        return redirect()->route('orders.index')->with('success', 'Estado del pedido #' . $order->id . ' actualizado.');
     }
 }

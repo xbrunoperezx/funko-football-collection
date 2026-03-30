@@ -23,6 +23,7 @@
                 <a href="{{ route('funkos.index') }}" class="text-gray-700 hover:text-blue-600">Funkos</a>
                 <a href="{{ route('categories.index') }}" class="text-gray-700 hover:text-blue-600">Categorías</a>
                 <a href="{{ route('users.index') }}" class="text-gray-700 hover:text-blue-600">Usuarios</a>
+                <a href="{{ route('orders.index') }}" class="text-gray-700 hover:text-blue-600">Pedidos</a>
             </div>
 
             <!-- Settings Dropdown -->

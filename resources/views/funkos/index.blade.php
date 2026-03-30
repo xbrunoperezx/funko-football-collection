@@ -13,6 +13,7 @@
                     <th class="text-center">Nombre</th>
                     <th class="text-center">Categoría</th>
                     <th class="text-center">Precio</th>
+                    <th class="text-center">Stock</th>
                     <th class="text-center">Acciones</th>
                 </tr>
             </thead>
@@ -30,6 +31,14 @@
                     </td>
                     <td>{{ $funko->category->name }}</td>
                     <td class="text-end">${{ number_format($funko->price, 2) }}</td>
+                    <td class="text-center">
+                        @if($funko->stock > 0)
+                            {{ $funko->stock }}
+                        @else
+                            <span class="badge bg-danger">Sin stock</span>
+                        @endif
+
+                    </td>
                     <td class="text-center">
                         <a href="{{ route('funkos.edit', $funko->id) }}" class="btn btn-primary btn-sm">Editar</a>
                         <form action="{{ route('funkos.destroy', $funko->id) }}" method="POST" style="display:inline;" onsubmit="return confirmDelete(event, this);">

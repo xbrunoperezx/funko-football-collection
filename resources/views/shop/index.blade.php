@@ -252,6 +252,7 @@
                             <span class="text-amber-400 font-black text-xl">${{ number_format($funko->price, 2) }}</span>
                             {{-- Botón añadir al carrito --}}
                             {{-- data-id, data-name, data-price: JS los leerá para guardar en localStorage --}}
+                            @if($funko->stock > 0)
                             <button
                                 class="add-to-cart flex-1 bg-amber-500 hover:bg-amber-400 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                                 data-id="{{ $funko->id }}"
@@ -261,6 +262,13 @@
                             >
                                 + Añadir
                             </button>
+                            @else
+                            <button disabled
+                                class="flex-1 bg-slate-600 text-slate-400 text-sm font-semibold py-2 px-4 rounded-lg cursor-not-allowed"
+                            >
+                                Agotado
+                            </button>
+                            @endif
                         </div>
                     </div>
                 </div>

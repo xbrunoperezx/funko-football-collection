@@ -325,20 +325,22 @@ Si el elemento tiene la clase `hidden` → la quita (muestra). Si no la tiene �
 ### 🎨 Mejoras visuales
 - [x] Footer de la tienda
 - [x] Menú hamburguesa en mobile (navbar responsive)
+- [x] Checkout completo: modal → POST → DB → confirmación + vaciar carrito — 27/03
+- [x] Botón "Agotado" deshabilitado en cards si `stock = 0` — 30/03
 - [ ] Modal o página de detalle del funko (opcional)
-- [ ] Checkout simulado (formulario de datos, sin pasarela real)
 
 ---
 
-## 🗺️ Ruta de trabajo recomendada (actualizada 24/03/2026)
+## 🗺️ Ruta de trabajo recomendada (actualizada 30/03/2026)
 
-1. ✅ **Navbar + Hero + Filtros + Buscador** — completado 20/03
-2. ✅ **Carrito con localStorage** — completado 23/03
-3. ✅ **Footer** de la tienda — completado 24/03
-4. ✅ **Navbar responsive** → menú hamburguesa mobile — completado 24/03
-5. ✅ **Backend**: campo `stock` en `funkos` + tabla `orders` — completado 24/03
-6. ⏳ **Checkout completo**: formulario → pedido → confirmación + vaciar carrito
-7. ⏳ **Login/registro opcional** en la tienda (`@guest` / `@auth` en navbar)
+1. ✅ **Navbar + Hero + Filtros + Buscador** — 20/03
+2. ✅ **Carrito con localStorage** — 23/03
+3. ✅ **Footer** de la tienda — 24/03
+4. ✅ **Navbar responsive** → menú hamburguesa mobile — 24/03
+5. ✅ **Backend**: campo `stock` en `funkos` + tabla `orders` — 24/03
+6. ✅ **Checkout completo**: modal → POST → DB → confirmación + vaciar carrito — 27/03
+7. ✅ **Botón "Agotado"** en cards si `stock = 0` — 30/03
+8. ⏳ **Login/registro opcional** en la tienda (`@guest` / `@auth` en navbar)
 
 ---
 

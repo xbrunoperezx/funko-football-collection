@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('funkos', FunkoController::class);
     Route::resource('categories', CategoryController::class);
     Route::resource('users', UserController::class);
+    Route::resource('orders', OrderController::class)->only(['index', 'update']); //no se neecsitan crear ni eliminar pedidos en admin
 });
 
 // Rutas para el formulario , guardar pedido y de la confirmacion de compra
