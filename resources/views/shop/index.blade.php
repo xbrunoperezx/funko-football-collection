@@ -46,6 +46,17 @@
                 Catálogo
             </a>
 
+            {{-- Login / usuario autenticado --}}
+            @guest
+                <a href="{{ route('login') }}" class="hidden md:block text-sm font-medium text-slate-300 hover:text-white transition-colors duration-200">
+                    Iniciar sesión
+                </a>
+            @else
+                <a href="{{ route('dashboard') }}" class="hidden md:block text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors duration-200">
+                    {{ Auth::user()->name }} · Admin
+                </a>
+            @endguest     
+
             {{-- Botón carrito con contador dinámico --}}
             {{-- id="cart-count": JavaScript actualizará este número cuando se añada un producto --}}
             <button
