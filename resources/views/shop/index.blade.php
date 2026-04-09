@@ -52,10 +52,23 @@
                     Iniciar sesión
                 </a>
             @else
-                <a href="{{ route('dashboard') }}" class="hidden md:block text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors duration-200">
-                    {{ Auth::user()->name }} · Admin
-                </a>
-            @endguest     
+                @if(Auth::user()->role ==='admin')
+                    <a href="{{ route('dashboard') }}" class="hidden md:block text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors duration-200">
+                        {{ Auth::user()->name }} · Admin
+                    </a>
+                @else
+                    <span class="hidden md:block text-sm font-medium text-slate-300">
+                        {{ Auth::user()->name }}
+                    </span>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="hidden md:block text-sm font-medium text-slate-400 hover:text-red-400 transition-colors duration-200">
+                            Cerrar sesión
+                        </button>
+                    </form>
+                @endif        
+           @endguest     
 
             {{-- Botón carrito con contador dinámico --}}
             {{-- id="cart-count": JavaScript actualizará este número cuando se añada un producto --}}
